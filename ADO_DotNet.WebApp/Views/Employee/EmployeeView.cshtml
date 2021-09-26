@@ -1,0 +1,93 @@
+﻿@model ADO_DotNet.Models.Entities.Employee
+
+@{
+    ViewData["Title"] = Model == null ? "Create Employee" : (Model.ViewType == "View" ? "View Employee" : "Update Employee");
+    ViewData["PageAction"] = Model == null ? "Create" : (Model.ViewType == "View" ? "View" : "Update");
+    ViewData["Action"] = Model != null && Model.ViewType == "View" ? "" : ViewData["PageAction"];
+    ViewData["BtnCaption"] = Model != null && Model.ViewType == "View" ? "Back" : ViewData["PageAction"];
+    ViewData["Submit"] = Model != null && Model.ViewType == "View" ? "Button" : "Submit";
+    ViewData["FormEncType"] = Model != null && Model.ViewType == "View" ? "application/x-www-form-urlencoded" : "multipart/form-data";
+}
+
+<h1>@ViewData["PageAction"] Department</h1>
+
+<h4>Employee</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action=@ViewData["Action"] enctype="@ViewData["FormEncType"]">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            @if ((string)ViewData["PageAction"] == "Update")
+            {
+                <input asp-for="EmpId" hidden="hidden" class="form-control" />
+            }
+            else if ((string)ViewData["PageAction"] == "View")
+            {
+                <div class="form-group">
+                    <label asp-for="EmpId" class="control-label"></label>
+                    <input asp-for="EmpId" disabled="disabled" class="form-control" />
+                    <span asp-validation-for="EmpId" class="text-danger"></span>
+                </div>
+            }
+            <div class="form-group">
+                <label asp-for="DeptId" class="control-label"></label>
+                @if ((string)ViewData["PageAction"] == "View")
+                {
+                    <input asp-for="Department.Name" disabled="disabled" class="form-control" />
+                }
+                else
+                {
+                    <select asp-for="DeptId" class="form-control" asp-items="@(new SelectList(ViewBag.Departments,"DeptId", "Name"))">
+                        <option>--Select--</option>
+                    </select>
+                }
+                <span asp-validation-for="DeptId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                @if ((string)ViewData["PageAction"] == "View")
+                {
+                    <input asp-for="Name" disabled="disabled" class="form-control" />
+                }
+                else
+                {
+                    <input asp-for="Name" class="form-control" />
+                }
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Address" class="control-label"></label>
+                @if ((string)ViewData["PageAction"] == "View")
+                {
+                    <input asp-for="Address" disabled="disabled" class="form-control" />
+                }
+                else
+                {
+                    <input asp-for="Address" class="form-control" />
+                }
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ImagePath" class="control-label"></label>
+                @if ((string)ViewData["PageAction"] == "View")
+                {
+                    @*<img src="@Url.Content(Model.ImagePath)" class="img-fluid rounded" style="width:130px" alt="@Model.Name" />*@
+                    <img src="@("~/Upload/"+Model.ImagePath)" asp-append-version="true" class="img-fluid rounded" style="width:130px" alt="@Model.Name" />
+                }
+                else
+                {
+                    <input type="file" asp-for="Upload" class="form-control" accept="image/*" />
+                    @*<input asp-for="ImagePath" hidden="hidden" value=@Model.Upload class="form-control" />*@
+                }
+                <span asp-validation-for="ImagePath" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value=@ViewData["BtnCaption"] class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
